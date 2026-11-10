@@ -1,15 +1,15 @@
 # InventoryShop · 背包商店经营
 
-面向 PC 横屏的纯 UI 奇幻杂货铺。项目使用 Unity **2022.3.55f1c1**、uGUI **1.0.0** 和 TextMeshPro **3.0.7**。当前已接入第三阶段采购与金币交易。
+面向 PC 横屏的纯 UI 奇幻杂货铺。项目使用 Unity **2022.3.55f1c1**、uGUI **1.0.0** 和 TextMeshPro **3.0.7**。当前已接入第四阶段顾客订单与货架出售。
 
 ## 运行
 
 1. 在 Unity Hub 中用项目指定版本打开仓库并等待资源导入。
 2. 打开 `Assets/Scenes/MainMenu.unity`，将 Game View 设为 16:9 并点击 Play。
-3. 测试设置和返回，再进入商店。点击四种商品查看图鉴，用底部背包入口打开库存，用采购入口向批发商订货，经营统计与结束营业入口显示开发中提示，最后返回主菜单。
+3. 测试设置和返回，再进入商店。点击四种商品查看图鉴，用底部背包入口打开库存，用采购入口向批发商订货，在右侧处理当日订单，处理完五位顾客后可结束营业，最后返回主菜单。
 4. Windows 构建从 MainMenu 启动，Shop 排在第二。退出按钮在构建中关闭程序，在编辑器 Play Mode 中显示说明。
 
-开局金币为 500，由交易模型维护。第 1 天为展示数据。设置面板可开关，尚无可保存的选项。
+开局金币为 500，由交易模型维护。本阶段可经营第 1 天并标记营业结束。设置面板可开关，尚无可保存的选项。
 
 ## 项目结构
 
@@ -18,13 +18,13 @@
 | `Assets/Scenes` | MainMenu、Shop 和原有 SampleScene |
 | `Assets/InventoryShop/Art` | 场景插画、界面纹理、透明商品图标 |
 | `Assets/InventoryShop/Fonts` | 中文字体子集、字形清单、TMP SDF 资源及 OFL |
-| `Assets/InventoryShop/Prefabs/UI` | WoodButton、ShelfSlot、BackpackSlot、WholesaleCard |
-| `Assets/InventoryShop/Data` | 物品定义、开局库存和批发目录 |
+| `Assets/InventoryShop/Prefabs/UI` | WoodButton、ShelfSlot、BackpackSlot、WholesaleCard、CustomerOrderCard |
+| `Assets/InventoryShop/Data` | 物品定义、开局库存、批发目录和顾客名单 |
 | `Assets/InventoryShop/Scripts/Runtime/UI` | 场景导航、面板动画、按钮和货架反馈 |
-| `Assets/InventoryShop/Scripts/Editor` | 基础场景生成器和背包、采购增量安装器 |
+| `Assets/InventoryShop/Scripts/Editor` | 基础场景生成器和背包、采购、顾客订单增量安装器 |
 | `Assets/TextMesh Pro` | Unity 随包提供的 TMP Essential Resources |
 
-场景和 Prefab 已生成。背包和采购均增量安装到现有 Shop 场景，MainMenu 和原美术未改动。**Tools → InventoryShop → Install Backpack UI** 用于迁移第一阶段的 Shop 场景，采购对应 **Tools → InventoryShop → Install Wholesale UI**。两个安装器在已安装时会直接返回。早期的 **Generate Phase One** 会重建第一阶段场景，仅用于第一阶段基线。
+场景和 Prefab 已生成。背包和采购均增量安装到现有 Shop 场景，MainMenu 和原美术未改动。**Tools → InventoryShop → Install Backpack UI** 用于迁移第一阶段的 Shop 场景，采购对应 **Tools → InventoryShop → Install Wholesale UI**。顾客订单对应 **Tools → InventoryShop → Install Customer Orders**。安装器在已安装时会直接返回。早期的 **Generate Phase One** 会重建第一阶段场景，仅用于第一阶段基线。
 字体来自 Noto Sans CJK SC，按第一阶段文案子集化并改名为 InventoryShop Chinese，授权见 `Fonts/OFL.txt`。新增汉字时，同时扩充 `Glyphs.txt` 和字体源文件，并重建 `ShopChinese.asset`。已生成的静态图集覆盖当前界面和演示文案。
 
 ## 美术制作
@@ -82,3 +82,15 @@
 - 通过内置 ImageGen 生成透明图集并裁成五张 PNG。提示为暖色奇幻杂货铺的细绘库存图标，分别画蓝色魔力药水、切断的木段、带银灰矿斑的铁矿石、皮柄短匕首和弯月银项链。原有三张商品图标和面板按钮纹理复用。
 
 第三阶段在独立副本完成 Unity 编译、Windows x64 构建和 Player 验证。65 项断言通过，包括金币不足与满背包的原子拒绝、实际采购后上架、滚动到第八件商品、两处金币的中间动画值和三档横屏布局。
+
+## 第四阶段顾客订单
+
+每个会话在首次进入商店时从六位顾客中抽选五位，按顺序展示。商品取自批发目录，数量为 1 到 3，且不超过商品堆叠上限。订单保留售价与数量乘积，没有等待倒计时。打开背包或采购时订单卡让出右侧，关闭后恢复当前顾客。也可用顶部按钮收起卡片查看原货架图鉴。
+
+- 交易只检查货架，按格位顺序扣除同种商品。数量不足时保留所有货位和订单。成功时同时更新余额、累计销售额、订单状态和计数，再通知 UI。
+- 拒绝需在卡片中确认，取消保持等待。处理完五份订单后才允许结束营业，结束仅标记当天状态。
+- 返回主菜单再进入时保留订单、进度、余额和库存。退出程序后新会话从开局状态开始。
+- 测试时在 `Assets/InventoryShop/Data/CustomerRoster.asset` 勾选 Use Fixed Seed 并填写 Seed，从新的 Play 会话进入商店。运行时默认随机，固定种子可复现顺序、商品和数量。
+- 六张透明顾客 PNG 由内置 ImageGen 生成。提示为统一暖灯光手绘奇幻半身头像，三列两行依次为冒险者、法师、商人、骑士、旅者、学者，并保留透明间隔以便切图。
+
+第四阶段在独立副本完成 Unity 编译、Windows x64 构建和 Player 验证。固定种子 117 下有 78 项断言通过，覆盖采购到出售、货架跨格扣除、确认拒绝、动画中间状态、三档横屏和当日结束。用同一 Seed 开启新的 Play 会话，首单为 2 瓶魔力药水，第二单为 3 瓶小型治疗药水。

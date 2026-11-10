@@ -25,6 +25,7 @@ namespace InventoryShop
         public Image ProductIcon;
         public Product[] Products;
         public ShopInventory Inventory;
+        public CustomerOrdersView Customers;
 
         public bool CanUseInventory => !transitioning && modal == null && !wholesaleOpen;
 
@@ -108,7 +109,7 @@ namespace InventoryShop
 
         public void ShowInventoryProduct(ItemDefinition item)
         {
-            if (!CanUseInventory || item == null) return;
+            if (!CanUseInventory || item == null || (Customers != null && Customers.WantsCard)) return;
             ProductName.text = item.DisplayName;
             Quality.text = item.Quality;
             Description.text = item.Description;

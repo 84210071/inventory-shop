@@ -270,7 +270,7 @@ namespace InventoryShop.Editor
             return cards;
         }
 
-        private static Button Wood(Transform parent, TMP_FontAsset font, string name, string caption,
+        internal static Button Wood(Transform parent, TMP_FontAsset font, string name, string caption,
             float x, float y, float width, float height, float fontSize)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/UI/WoodButton.prefab");

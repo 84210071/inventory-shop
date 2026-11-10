@@ -97,6 +97,26 @@ namespace InventoryShop
             return true;
         }
 
+        internal bool TryReleaseSale(ItemDefinition item, int quantity)
+        {
+            if (quantity < 1) return false;
+            long available = 0;
+            foreach (var stack in shelf)
+                if (!stack.IsEmpty && stack.Item.Id == item.Id) available += stack.Quantity;
+            if (available < quantity) return false;
+
+            for (int i = 0; i < shelf.Length && quantity > 0; i++)
+            {
+                var stack = shelf[i];
+                if (stack.IsEmpty || stack.Item.Id != item.Id) continue;
+                int sold = Math.Min(quantity, stack.Quantity);
+                int remainder = stack.Quantity - sold;
+                shelf[i] = remainder == 0 ? default : new ItemStack(stack.Item, remainder);
+                quantity -= sold;
+            }
+            return true;
+        }
+
         internal void NotifyChanged() => Changed?.Invoke();
 
         private StockMove Apply(SlotAddress source, SlotAddress target, ItemStack from, ItemStack to, StockMove result)
