@@ -26,9 +26,9 @@ namespace InventoryShop
         public Product[] Products;
         public ShopInventory Inventory;
 
-        public bool CanUseInventory => !transitioning && modal == null;
+        public bool CanUseInventory => !transitioning && modal == null && !wholesaleOpen;
 
-        private bool transitioning;
+        private bool transitioning, wholesaleOpen;
         private FadePanel modal;
         private GameObject previousFocus;
 
@@ -56,7 +56,7 @@ namespace InventoryShop
 
         public void Quit()
         {
-            if (transitioning || modal != null) return;
+            if (!CanUseInventory) return;
 #if UNITY_EDITOR
             NoticeText.text = "编辑器预览中\n正式版本将退出游戏";
             OpenModal(Notice, NoticeClose);
@@ -65,9 +65,20 @@ namespace InventoryShop
 #endif
         }
 
+        public bool TryBeginWholesale()
+        {
+            if (!CanUseInventory || Inventory == null) return false;
+            Inventory.SuspendForWholesale();
+            CloseDetails();
+            wholesaleOpen = true;
+            return true;
+        }
+
+        public void EndWholesale() => wholesaleOpen = false;
+
         private void OpenModal(FadePanel panel, Button close)
         {
-            if (transitioning || modal != null) return;
+            if (!CanUseInventory) return;
             previousFocus = EventSystem.current.currentSelectedGameObject;
             modal = panel;
             panel.Show();
@@ -84,7 +95,7 @@ namespace InventoryShop
 
         public void ShowProduct(int index)
         {
-            if (transitioning || modal != null) return;
+            if (!CanUseInventory) return;
             var product = Products[index];
             foreach (var entry in Products) entry.Slot.Marked = entry == product;
             ProductName.text = product.Name;
@@ -108,7 +119,7 @@ namespace InventoryShop
 
         public void CloseDetails()
         {
-            if (transitioning || modal != null) return;
+            if (!CanUseInventory) return;
             Details.Hide();
             if (Inventory != null)
             {
@@ -124,7 +135,7 @@ namespace InventoryShop
 
         private void Navigate(string scene)
         {
-            if (transitioning || modal != null) return;
+            if (!CanUseInventory) return;
             StartCoroutine(SwitchScene(scene));
         }
 

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: frost-crystal
   m_EditorClassIdentifier: 
   id: frost-crystal
-  displayName: "\u971C\u84DD\u6676\u77F3"
+  displayName: "\u795E\u79D8\u5B9D\u77F3"
   quality: "\u7A00\u6709"
-  description: "\u5317\u5883\u77FF\u8109\u51FA\u4EA7\u7684\u6676\u77F3\u3002\u5149\u7167\u4E0B\uFF0C\u6676\u9762\u6D6E\u8D77\u6D45\u84DD\u7684\u6CE2\u7EB9\u3002"
+  description: "\u6676\u77F3\u5185\u90E8\u4EFF\u4F5B\u5C01\u5B58\u7740\u4E00\u7F15\u84DD\u5149\uFF0C\u6765\u5386\u65E0\u4EBA\u77E5\u6653\u3002"
   icon: {fileID: 21300000, guid: 9e7c9900d17a5264591c73319424d7a6, type: 3}
-  purchasePrice: 75
-  salePrice: 120
+  purchasePrice: 150
+  salePrice: 240
   stackLimit: 5

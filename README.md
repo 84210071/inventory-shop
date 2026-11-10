@@ -1,15 +1,15 @@
 # InventoryShop · 背包商店经营
 
-面向 PC 横屏的纯 UI 奇幻杂货铺。项目使用 Unity **2022.3.55f1c1**、uGUI **1.0.0** 和 TextMeshPro **3.0.7**。当前已接入第二阶段背包与货架库存。
+面向 PC 横屏的纯 UI 奇幻杂货铺。项目使用 Unity **2022.3.55f1c1**、uGUI **1.0.0** 和 TextMeshPro **3.0.7**。当前已接入第三阶段采购与金币交易。
 
-## 运行第一阶段
+## 运行
 
 1. 在 Unity Hub 中用项目指定版本打开仓库并等待资源导入。
 2. 打开 `Assets/Scenes/MainMenu.unity`，将 Game View 设为 16:9 并点击 Play。
-3. 测试设置和返回，再进入商店。点击四种商品查看图鉴，用底部背包入口打开库存，其他三个入口显示开发中提示，最后返回主菜单。
+3. 测试设置和返回，再进入商店。点击四种商品查看图鉴，用底部背包入口打开库存，用采购入口向批发商订货，经营统计与结束营业入口显示开发中提示，最后返回主菜单。
 4. Windows 构建从 MainMenu 启动，Shop 排在第二。退出按钮在构建中关闭程序，在编辑器 Play Mode 中显示说明。
 
-金币 500 和第 1 天仍为展示数据，四件商品已接入独立库存。设置面板可开关，尚无可保存的选项。
+开局金币为 500，由交易模型维护。第 1 天为展示数据。设置面板可开关，尚无可保存的选项。
 
 ## 项目结构
 
@@ -18,13 +18,13 @@
 | `Assets/Scenes` | MainMenu、Shop 和原有 SampleScene |
 | `Assets/InventoryShop/Art` | 场景插画、界面纹理、透明商品图标 |
 | `Assets/InventoryShop/Fonts` | 中文字体子集、字形清单、TMP SDF 资源及 OFL |
-| `Assets/InventoryShop/Prefabs/UI` | WoodButton、ShelfSlot、BackpackSlot |
-| `Assets/InventoryShop/Data` | 物品定义及开局库存 |
+| `Assets/InventoryShop/Prefabs/UI` | WoodButton、ShelfSlot、BackpackSlot、WholesaleCard |
+| `Assets/InventoryShop/Data` | 物品定义、开局库存和批发目录 |
 | `Assets/InventoryShop/Scripts/Runtime/UI` | 场景导航、面板动画、按钮和货架反馈 |
-| `Assets/InventoryShop/Scripts/Editor` | 第一阶段资源生成器 |
+| `Assets/InventoryShop/Scripts/Editor` | 基础场景生成器和背包、采购增量安装器 |
 | `Assets/TextMesh Pro` | Unity 随包提供的 TMP Essential Resources |
 
-场景和 Prefab 已生成。第二阶段只在现有 Shop 场景中增量安装背包，MainMenu 和原美术未改动。**Tools → InventoryShop → Install Backpack UI** 用于迁移第一阶段的 Shop 场景，已安装时会直接返回。早期的 **Generate Phase One** 会重建第一阶段场景，仅用于第一阶段基线。
+场景和 Prefab 已生成。背包和采购均增量安装到现有 Shop 场景，MainMenu 和原美术未改动。**Tools → InventoryShop → Install Backpack UI** 用于迁移第一阶段的 Shop 场景，采购对应 **Tools → InventoryShop → Install Wholesale UI**。两个安装器在已安装时会直接返回。早期的 **Generate Phase One** 会重建第一阶段场景，仅用于第一阶段基线。
 字体来自 Noto Sans CJK SC，按第一阶段文案子集化并改名为 InventoryShop Chinese，授权见 `Fonts/OFL.txt`。新增汉字时，同时扩充 `Glyphs.txt` 和字体源文件，并重建 `ShopChinese.asset`。已生成的静态图集覆盖当前界面和演示文案。
 
 ## 美术制作
@@ -53,15 +53,15 @@
 - Windows Player 烟雾测试覆盖主菜单与商店往返、悬停与按压、设置开关、四种商品详情、选中状态、四个开发中提示和退出。两个场景均在 1280×720、1600×900、1920×1080 检查控件边界与文字溢出。
 - Unity Editor 批处理 Play Mode 验证了主菜单淡入及编辑器退出提示。原项目的交互式 Game View 截取超时，交付的截图来自 Unity Windows Player。
 
-## 第二阶段库存规则
+## 库存规则
 
 点击商店底部的背包按钮打开右侧 5×4 窗口。左侧货架仍可操作。悬停物品可看品质、采购价、售价和当前数量。关闭背包后，点击货架可继续使用原商品图鉴。
 
 | 物品 | 采购价 | 售价 | 堆叠上限 | 背包开局 | 货架开局 |
 | --- | ---: | ---: | ---: | --- | ---: |
-| 赤焰药水 | 24 | 45 | 10 | 7、6 两叠 | 2 |
-| 旅人卷轴 | 15 | 28 | 8 | 3 | 1 |
-| 霜蓝晶石 | 75 | 120 | 5 | 2 | 1 |
+| 小型治疗药水 | 20 | 35 | 10 | 7、6 两叠 | 2 |
+| 魔法卷轴 | 80 | 130 | 5 | 3 | 1 |
+| 神秘宝石 | 150 | 240 | 5 | 2 | 1 |
 | 月露草 | 9 | 18 | 20 | 12 | 4 |
 
 在同一区域拖到不同物品上会交换位置。跨区域拖拽可放入空位或合并到同类堆叠。目标已满或被其他物品占用时会提示，超出同类堆叠上限的余量留在源格。库存跨主菜单往返保留，退出程序后重新使用开局配置。
@@ -71,3 +71,14 @@
 - `ShopInventory` 绑定背包和货架。每次拖拽只消费一次释放事件。`StockSlotView` 渲染模型。`InventoryOverlay` 负责弹窗、Tooltip、拖拽预览与提示。
 
 第二阶段在独立 Unity 项目副本中完成 Windows x64 构建和运行检查。78 项断言通过，覆盖移动、交换、完全与部分合并、上架取回、满容量、无效拖放、逐物品数量守恒和场景往返。1280×720、1600×900、1920×1080 均检查了 26 个格子的射线可达性和 TMP 文字溢出。
+
+## 第三阶段采购规则
+
+点击商店底部的采购按钮，滚动左侧货单选择商品，右侧调整数量并确认购买。采购打开时自动关闭背包和图鉴，关闭过渡结束后恢复商店交互。购买按钮有 0.25 秒防连击间隔。
+
+- `WholesaleCatalog.asset` 配置八种商品。小型治疗药水、魔法卷轴、神秘宝石分别沿用原药水、卷轴、晶石的资产与 ID。月露草继续作为开局库存。
+- `ShopEconomy` 持有 500 开局金币、累计采购金额和原有 `InventoryStock`。整单先检查余额和背包容量，先填同种未满堆叠，再用空格。交易成功才扣款并广播，背包与两处余额同步刷新。
+- 余额、采购金额和库存会跨场景保留。关闭程序后开启新会话，回到开局状态。
+- 通过内置 ImageGen 生成透明图集并裁成五张 PNG。提示为暖色奇幻杂货铺的细绘库存图标，分别画蓝色魔力药水、切断的木段、带银灰矿斑的铁矿石、皮柄短匕首和弯月银项链。原有三张商品图标和面板按钮纹理复用。
+
+第三阶段在独立副本完成 Unity 编译、Windows x64 构建和 Player 验证。65 项断言通过，包括金币不足与满背包的原子拒绝、实际采购后上架、滚动到第八件商品、两处金币的中间动画值和三档横屏布局。

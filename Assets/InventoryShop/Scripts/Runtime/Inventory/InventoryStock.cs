@@ -69,6 +69,36 @@ namespace InventoryShop
                 new ItemStack(to.Item, to.Quantity + amount), remainder == 0 ? StockMove.Moved : StockMove.Partial);
         }
 
+        internal bool TryReceivePurchase(ItemDefinition item, int quantity)
+        {
+            long capacity = 0;
+            foreach (var stack in backpack)
+            {
+                if (stack.IsEmpty) capacity += item.StackLimit;
+                else if (stack.Item.Id == item.Id) capacity += stack.Item.StackLimit - stack.Quantity;
+            }
+            if (capacity < quantity) return false;
+
+            for (int i = 0; i < backpack.Length && quantity > 0; i++)
+            {
+                var stack = backpack[i];
+                if (stack.IsEmpty || stack.Item.Id != item.Id) continue;
+                int amount = Math.Min(quantity, stack.Item.StackLimit - stack.Quantity);
+                backpack[i] = new ItemStack(stack.Item, stack.Quantity + amount);
+                quantity -= amount;
+            }
+            for (int i = 0; i < backpack.Length && quantity > 0; i++)
+            {
+                if (!backpack[i].IsEmpty) continue;
+                int amount = Math.Min(quantity, item.StackLimit);
+                backpack[i] = new ItemStack(item, amount);
+                quantity -= amount;
+            }
+            return true;
+        }
+
+        internal void NotifyChanged() => Changed?.Invoke();
+
         private StockMove Apply(SlotAddress source, SlotAddress target, ItemStack from, ItemStack to, StockMove result)
         {
             Slots(source.Area)[source.Index] = from;

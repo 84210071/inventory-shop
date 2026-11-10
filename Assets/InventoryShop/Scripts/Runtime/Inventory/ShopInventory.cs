@@ -12,18 +12,19 @@ namespace InventoryShop
         public Button BackpackButton, CloseButton;
         public StockSlotView[] ShelfSlots, BackpackSlots;
 
-        private static InventoryStock sessionStock;
+        private static ShopEconomy sessionEconomy;
         private StockSlotView selected, hovered, dragSource;
         private int dragPointer;
 
-        public InventoryStock Stock { get; private set; }
+        public ShopEconomy Economy { get; private set; }
+        public InventoryStock Stock => Economy?.Stock;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetSession() => sessionStock = null;
+        private static void ResetSession() => sessionEconomy = null;
 
         private void Awake()
         {
-            Stock = sessionStock ??= InitialStock.Create();
+            Economy = sessionEconomy ??= new ShopEconomy(InitialStock.Create());
             Bind(ShelfSlots, StockArea.Shelf);
             Bind(BackpackSlots, StockArea.Backpack);
             BackpackButton.onClick.AddListener(ToggleBackpack);
@@ -51,6 +52,14 @@ namespace InventoryShop
                 Overlay.SetOpen(true);
                 CloseButton.Select();
             }
+        }
+
+        public void SuspendForWholesale()
+        {
+            CloseBackpack();
+            CancelDrag();
+            hovered = null;
+            Overlay.HideTooltip();
         }
 
         private void CloseBackpack()

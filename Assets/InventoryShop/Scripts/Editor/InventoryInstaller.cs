@@ -121,19 +121,19 @@ namespace InventoryShop.Editor
             }
         }
 
-        private static TMP_FontAsset LoadFont()
+        internal static TMP_FontAsset LoadFont(string assetName = "InventoryChinese", string glyphFile = "InventoryGlyphs")
         {
-            const string path = Root + "Fonts/InventoryChinese.asset";
+            string path = Root + "Fonts/" + assetName + ".asset";
             var existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path);
             if (existing != null) return existing;
-            var source = AssetDatabase.LoadAssetAtPath<Font>(Root + "Fonts/InventoryChinese.otf");
+            var source = AssetDatabase.LoadAssetAtPath<Font>(Root + "Fonts/" + assetName + ".otf");
             var font = TMP_FontAsset.CreateFontAsset(source, 60, 7, GlyphRenderMode.SDFAA,
                 2048, 2048, AtlasPopulationMode.Dynamic, false);
-            if (!font.TryAddCharacters(File.ReadAllText(Root + "Fonts/InventoryGlyphs.txt"), out string missing))
+            if (!font.TryAddCharacters(File.ReadAllText(Root + "Fonts/" + glyphFile + ".txt"), out string missing))
                 throw new InvalidOperationException("Missing inventory glyphs: " + missing);
             font.atlasPopulationMode = AtlasPopulationMode.Static;
-            font.material.name = "Inventory Chinese SDF Material";
-            font.atlasTexture.name = "Inventory Chinese SDF Atlas";
+            font.material.name = assetName + " SDF Material";
+            font.atlasTexture.name = assetName + " SDF Atlas";
             font.atlasTexture.Apply(false, true);
             AssetDatabase.CreateAsset(font, path);
             AssetDatabase.AddObjectToAsset(font.atlasTexture, font);
@@ -180,7 +180,7 @@ namespace InventoryShop.Editor
             return view;
         }
 
-        private static void ClearClick(Button button)
+        internal static void ClearClick(Button button)
         {
             for (int i = button.onClick.GetPersistentEventCount() - 1; i >= 0; i--)
                 UnityEventTools.RemovePersistentListener(button.onClick, i);
@@ -250,7 +250,7 @@ namespace InventoryShop.Editor
             return overlay;
         }
 
-        private static RectTransform Rect(string name, Transform parent, float x, float y, float width, float height)
+        internal static RectTransform Rect(string name, Transform parent, float x, float y, float width, float height)
         {
             var rect = (RectTransform)new GameObject(name, typeof(RectTransform)).transform;
             rect.SetParent(parent, false);
@@ -258,14 +258,14 @@ namespace InventoryShop.Editor
             return rect;
         }
 
-        private static void SetRect(RectTransform rect, float x, float y, float width, float height)
+        internal static void SetRect(RectTransform rect, float x, float y, float width, float height)
         {
             rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
             rect.anchoredPosition = new Vector2(x, y);
             rect.sizeDelta = new Vector2(width, height);
         }
 
-        private static Image Picture(string name, Transform parent, Sprite sprite, float x, float y, float w, float h)
+        internal static Image Picture(string name, Transform parent, Sprite sprite, float x, float y, float w, float h)
         {
             var image = Rect(name, parent, x, y, w, h).gameObject.AddComponent<Image>();
             image.sprite = sprite;
@@ -274,7 +274,7 @@ namespace InventoryShop.Editor
             return image;
         }
 
-        private static TMP_Text Label(string name, Transform parent, TMP_FontAsset font, string value, Color color,
+        internal static TMP_Text Label(string name, Transform parent, TMP_FontAsset font, string value, Color color,
             float size, float x, float y, float w, float h)
         {
             var text = Rect(name, parent, x, y, w, h).gameObject.AddComponent<TextMeshProUGUI>();

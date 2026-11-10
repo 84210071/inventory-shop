@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: ember-potion
   m_EditorClassIdentifier: 
   id: ember-potion
-  displayName: "\u8D64\u7130\u836F\u6C34"
-  quality: "\u7CBE\u826F"
-  description: "\u4EE5\u706B\u8393\u548C\u6668\u9732\u71AC\u5236\u3002\u73BB\u7483\u74F6\u89E6\u624B\u5FAE\u6E29\uFF0C\u9002\u5408\u5BD2\u591C\u91CC\u7684\u8FDC\u884C\u8005\u3002"
+  displayName: "\u5C0F\u578B\u6CBB\u7597\u836F\u6C34"
+  quality: "\u666E\u901A"
+  description: "\u4EE5\u6668\u9732\u548C\u706B\u8393\u71AC\u5236\u7684\u6E29\u548C\u836F\u5242\uFF0C\u9002\u5408\u5192\u9669\u9014\u4E2D\u968F\u8EAB\u643A\u5E26\u3002"
   icon: {fileID: 21300000, guid: 55321797ca27ec5418b68ac28101ed49, type: 3}
-  purchasePrice: 24
-  salePrice: 45
+  purchasePrice: 20
+  salePrice: 35
   stackLimit: 10

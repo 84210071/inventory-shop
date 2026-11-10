@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: traveler-scroll
   m_EditorClassIdentifier: 
   id: traveler-scroll
-  displayName: "\u65C5\u4EBA\u5377\u8F74"
-  quality: "\u666E\u901A"
-  description: "\u4E00\u5377\u675F\u4EE5\u7EA2\u7EF3\u7684\u8DEF\u4E66\u3002\u8FB9\u89D2\u6807\u8BB0\u7740\u65C5\u4EBA\u4EEC\u719F\u77E5\u7684\u6B47\u811A\u5904\u3002"
+  displayName: "\u9B54\u6CD5\u5377\u8F74"
+  quality: "\u7CBE\u826F"
+  description: "\u7EA2\u7EF3\u675F\u8D77\u7684\u53E4\u8001\u5377\u8F74\uFF0C\u7EB8\u9762\u7ED8\u7740\u7EC6\u5BC6\u7684\u7B26\u6587\u3002"
   icon: {fileID: 21300000, guid: 38a33f1de1d82d840a47d6190463ed88, type: 3}
-  purchasePrice: 15
-  salePrice: 28
-  stackLimit: 8
+  purchasePrice: 80
+  salePrice: 130
+  stackLimit: 5
