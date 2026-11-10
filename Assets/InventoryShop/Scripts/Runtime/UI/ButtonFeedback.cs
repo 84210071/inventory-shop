@@ -13,7 +13,10 @@ namespace InventoryShop
         public bool Marked { get; set; }
 
         private bool hovered, focused, held;
-        private float submitUntil;
+        private float submitUntil, pulseUntil;
+        private float baseScale = 1f;
+
+        public void Pulse() => pulseUntil = Time.unscaledTime + 0.22f;
 
         private void Update()
         {
@@ -22,14 +25,17 @@ namespace InventoryShop
             Surface.sprite = pressed ? Pressed : highlighted ? Hover : Normal;
             if (SelectionOutline != null) SelectionOutline.enabled = Marked;
             float target = pressed ? 0.96f : highlighted ? 1.045f : 1f;
-            float scale = Mathf.MoveTowards(transform.localScale.x, target, Time.unscaledDeltaTime * 0.65f);
+            baseScale = Mathf.MoveTowards(baseScale, target, Time.unscaledDeltaTime * 0.65f);
+            float pulse = Mathf.Clamp01((pulseUntil - Time.unscaledTime) / 0.22f);
+            float scale = baseScale + Mathf.Sin(pulse * Mathf.PI) * 0.045f;
             transform.localScale = new Vector3(scale, scale, 1f);
         }
 
         private void OnDisable()
         {
             hovered = focused = held = false;
-            submitUntil = 0f;
+            submitUntil = pulseUntil = 0f;
+            baseScale = 1f;
             transform.localScale = Vector3.one;
         }
 

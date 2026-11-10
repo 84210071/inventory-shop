@@ -24,6 +24,9 @@ namespace InventoryShop
         public TMP_Text NoticeText, ProductName, Quality, Description, Price;
         public Image ProductIcon;
         public Product[] Products;
+        public ShopInventory Inventory;
+
+        public bool CanUseInventory => !transitioning && modal == null;
 
         private bool transitioning;
         private FadePanel modal;
@@ -92,10 +95,26 @@ namespace InventoryShop
             Details.Show();
         }
 
+        public void ShowInventoryProduct(ItemDefinition item)
+        {
+            if (!CanUseInventory || item == null) return;
+            ProductName.text = item.DisplayName;
+            Quality.text = item.Quality;
+            Description.text = item.Description;
+            Price.text = item.SalePrice + " 金币";
+            ProductIcon.sprite = item.Icon;
+            Details.Show();
+        }
+
         public void CloseDetails()
         {
             if (transitioning || modal != null) return;
             Details.Hide();
+            if (Inventory != null)
+            {
+                Inventory.ClearSelection();
+                return;
+            }
             foreach (var entry in Products)
             {
                 if (entry.Slot.Marked) entry.Slot.GetComponent<Button>().Select();
