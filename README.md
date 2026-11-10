@@ -1,38 +1,54 @@
-# InventoryShop
+# InventoryShop · 背包商店经营
 
-面向 PC 的 Unity 2D 奇幻杂货铺经营游戏。核心操作在 uGUI 中完成，文本使用 TextMeshPro。当前提交是项目初始化基线。
+面向 PC 横屏的纯 UI 奇幻杂货铺。项目使用 Unity **2022.3.55f1c1**、uGUI **1.0.0** 和 TextMeshPro **3.0.7**。
 
-## 环境与能力
+## 运行第一阶段
 
-- 使用 Unity Hub 打开项目根目录，编辑器版本为 `2022.3.55f1c1`。
-- 项目已声明 uGUI `1.0.0` 和 TextMeshPro `3.0.7`。首次创建 TMP 文本时，如提示缺少基础资源，执行 **Window → TextMeshPro → Import TMP Essential Resources**。
-- 当前工作环境提供图片生成工具。本阶段尚未生成或导入正式美术。进入界面制作阶段后，将生成的背景、面板纹理、物品图标和装饰 PNG 存入下方对应目录。
-- Unity 编辑器已安装。后续使用 `Assets/InventoryShop/Scripts/Editor` 下的生成器，通过 `MenuItem` 在编辑器内执行，并提供可供 `-batchmode -executeMethod` 调用的静态入口。批处理使用未被其他 Unity 实例打开的项目副本。
+1. 在 Unity Hub 中用项目指定版本打开仓库并等待资源导入。
+2. 打开 `Assets/Scenes/MainMenu.unity`，将 Game View 设为 16:9 并点击 Play。
+3. 测试设置和返回，再进入商店。点击四种商品查看图鉴，用底部四个入口查看开发中提示，最后返回主菜单。
+4. Windows 构建从 MainMenu 启动，Shop 排在第二。退出按钮在构建中关闭程序，在编辑器 Play Mode 中显示说明。
 
-## 资源目录
+金币 500、第 1 天和四件商品是本阶段的展示数据。设置面板可开关，尚无可保存的选项。
 
-| 路径（相对于 Assets） | 用途 |
+## 项目结构
+
+| 目录 | 内容 |
 | --- | --- |
-| `Scenes/` | Unity 场景，当前保留模板的 SampleScene |
-| `InventoryShop/Art/Backgrounds/` | 主菜单和商店背景 |
-| `InventoryShop/Art/Icons/` | 物品、金币及操作图标 |
-| `InventoryShop/Art/UI/` | 羊皮纸、木框、按钮纹理和装饰 |
-| `InventoryShop/Fonts/` | 项目字体、TMP 字体资产及授权文件 |
-| `InventoryShop/Animations/UI/` | UI 动画资产 |
-| `InventoryShop/Prefabs/UI/` | 按钮、弹窗、面板及货架卡片 |
-| `InventoryShop/Scripts/Runtime/UI/` | 界面控制器、导航及交互反馈 |
-| `InventoryShop/Scripts/Editor/` | 场景与 Prefab 生成工具 |
+| `Assets/Scenes` | MainMenu、Shop 和原有 SampleScene |
+| `Assets/InventoryShop/Art` | 场景插画、界面纹理、透明商品图标 |
+| `Assets/InventoryShop/Fonts` | 中文字体子集、字形清单、TMP SDF 资源及 OFL |
+| `Assets/InventoryShop/Prefabs/UI` | WoodButton 和 ShelfSlot |
+| `Assets/InventoryShop/Scripts/Runtime/UI` | 场景导航、面板动画、按钮和货架反馈 |
+| `Assets/InventoryShop/Scripts/Editor` | 第一阶段资源生成器 |
+| `Assets/TextMesh Pro` | Unity 随包提供的 TMP Essential Resources |
 
-空目录用 `.gitkeep` 保留。新增或移动 Unity 资源时一起提交对应的 `.meta` 文件。
+场景和 Prefab 已生成。若需要重新生成，退出 Play Mode，打开 SampleScene，再执行 **Tools → InventoryShop → Generate Phase One**。该命令重建 MainMenu、Shop 和两个同名 Prefab，手工编辑这些输出前请先提交修改。命令保留其他 Build Settings 场景和顺序。命令行入口为 `InventoryShop.Editor.PhaseOneBuilder.Generate`，仅在目标项目未被其他 Unity 实例打开时启动批处理。
 
-## 下一阶段的界面方案
+字体来自 Noto Sans CJK SC，按第一阶段文案子集化并改名为 InventoryShop Chinese，授权见 `Fonts/OFL.txt`。新增汉字时，同时扩充 `Glyphs.txt` 和字体源文件，并重建 `ShopChinese.asset`。已生成的静态图集覆盖当前界面和演示文案。
 
-1. **公共基础**。生成屏幕空间 Canvas、GraphicRaycaster 和一个 EventSystem。Canvas Scaler 使用 Scale With Screen Size，参考分辨率为 1920×1080，宽高匹配值为 0.5。使用锚点及布局组件验证常见横屏分辨率。共享按钮、面板和排版规则，使用暖木纹、羊皮纸、暗金描边与深棕色文字。面板采用可九宫格拉伸的纹理，中文 TMP 字体确认覆盖所需字形。
-2. **主菜单**。以暖光杂货铺插画作为背景，标题和操作集中在可读性稳定的羊皮纸区域。“进入商店”打开商店场景，“退出”结束桌面版应用。将主菜单设为首个构建场景，验证鼠标与键盘导航。
-3. **商店主界面**。顶部保留店名、金币展示和返回入口，中央放货架展示区，侧边放物品详情面板。使用演示内容验证布局、信息层级和详情切换。背包、采购和顾客订单安排在后续独立阶段。
-4. **反馈和过渡**。按钮支持悬停、键盘选中、按压和释放反馈。场景切换使用短淡出，详情面板使用 CanvasGroup 淡入淡出，隐藏时关闭射线拦截。动画使用非缩放时间，避免暂停状态下卡住。
-5. **自动化与验收**。生成器通过 AssetDatabase、PrefabUtility 和 EditorSceneManager 写入明确的资源路径，重复运行时避免重复对象或覆盖手工资产。先验证场景互相可达、控制台无报错、长文本不会溢出，再验收视觉和交互。
+## 美术制作
 
-## 验证当前初始化
+使用内置 ImageGen 生成下列美术。插画裁切至 1920×1080。按钮和货格从原图派生亮色悬停、暗色按压版本。透明图集切分为六张保留 alpha 通道的 PNG。
 
-在 Unity Hub 中使用指定版本打开仓库，等待导入完成。在 Project 窗口确认 `Assets/InventoryShop` 的目录可见，在 Package Manager 中核对 uGUI 和 TextMeshPro。打开 `Assets/Scenes/SampleScene.unity` 并进入 Play Mode，检查 Console 中有无导入或编译错误。此时运行的是 Unity 模板场景，主菜单和商店界面将在后续阶段加入。
+| 输出 | 生成提示摘要 |
+| --- | --- |
+| MainMenu | 宽幅蓝色暮光下的奇幻杂货铺外观，右侧为暖黄色玻璃窗，左侧是暗色树林和石墙，精细手绘，无文字 |
+| Shop | 暖色奇幻药剂铺内景，琥珀灯笼、木梁、边缘陈列药瓶和卷轴，中央压暗，无文字 |
+| Panel | 竖向正视羊皮纸面板，深木框与古金角花，浅色纸面留空 |
+| Button | 横向正视胡桃木按钮，古金斜边与角花，无文字 |
+| Slot | 正视方形木质货架格，内侧压暗，黄铜边框和下缘台面，格内留空 |
+| Potion、Scroll、Crystal、Herb、Coin、Emblem | 透明三列两行图集，红药水、卷轴、青色晶石、绿色香草、星纹金币、钥匙与羽毛徽章 |
+
+## UI 代码入口
+
+- `PhaseOneBuilder` 创建 Canvas、Canvas Scaler、EventSystem 和 Prefab 实例，用持久化 UnityEvent 绑定按钮与商品索引。
+- `ShopScreen` 管理场景淡入淡出、模态面板和商品详情。用 CanvasGroup 控制遮罩的透明度与点击拦截。
+- `ButtonFeedback` 从 EventSystem 获取悬停、焦点、按压和键盘提交事件，在 Update 中更新 Sprite 和缩放。
+- `FadePanel` 用非缩放时间和协程渐变面板透明度，切换时中断旧协程。隐藏面板同时停用交互和射线拦截。
+
+## 验证记录
+
+- 使用同版本 Unity 在隔离副本生成场景和 Prefab，并完成 Windows x64 构建。
+- Windows Player 烟雾测试覆盖主菜单与商店往返、悬停与按压、设置开关、四种商品详情、选中状态、四个开发中提示和退出。两个场景均在 1280×720、1600×900、1920×1080 检查控件边界与文字溢出。
+- Unity Editor 批处理 Play Mode 验证了主菜单淡入及编辑器退出提示。原项目的交互式 Game View 截取超时，交付的截图来自 Unity Windows Player。
