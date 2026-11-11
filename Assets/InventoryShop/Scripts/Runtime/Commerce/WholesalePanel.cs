@@ -91,6 +91,7 @@ namespace InventoryShop
         {
             if (IsOpen || closing || !Screen.TryBeginWholesale()) return;
             IsOpen = true;
+            GameAudio.Play("Open");
             Modal.interactable = Modal.blocksRaycasts = true;
             statusUntil = 0f;
             CloseButton.Select();
@@ -100,6 +101,7 @@ namespace InventoryShop
         {
             if (!IsOpen) return;
             IsOpen = false;
+            GameAudio.Play("Close");
             closing = true;
             Modal.interactable = false;
         }
@@ -138,6 +140,7 @@ namespace InventoryShop
             nextPurchase = Time.unscaledTime + 0.25f;
             BuyButton.interactable = false;
             var result = economy.Purchase(Current, quantity);
+            GameAudio.Play(result == PurchaseResult.Success ? "Buy" : "Error");
             switch (result)
             {
                 case PurchaseResult.Success:

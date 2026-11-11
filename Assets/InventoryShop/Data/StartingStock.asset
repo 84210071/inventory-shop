@@ -12,23 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79b646080eb4bbf4aafe01ee314cb63f, type: 3}
   m_Name: StartingStock
   m_EditorClassIdentifier: 
-  backpack:
-  - item: {fileID: 11400000, guid: a838c63a09190ec4e87a7ebd77b9ce8a, type: 2}
-    quantity: 7
-  - item: {fileID: 11400000, guid: a838c63a09190ec4e87a7ebd77b9ce8a, type: 2}
-    quantity: 6
-  - item: {fileID: 11400000, guid: a0eaecd5f31d6304098adaabe4af4249, type: 2}
-    quantity: 3
-  - item: {fileID: 11400000, guid: 0a3eb94730eb9bc47a73b1cff1476951, type: 2}
-    quantity: 2
-  - item: {fileID: 11400000, guid: ba33a6c8681b9c342849b8cc06b805ac, type: 2}
-    quantity: 12
-  shelf:
-  - item: {fileID: 11400000, guid: a838c63a09190ec4e87a7ebd77b9ce8a, type: 2}
-    quantity: 2
-  - item: {fileID: 11400000, guid: a0eaecd5f31d6304098adaabe4af4249, type: 2}
-    quantity: 1
-  - item: {fileID: 11400000, guid: 0a3eb94730eb9bc47a73b1cff1476951, type: 2}
-    quantity: 1
-  - item: {fileID: 11400000, guid: ba33a6c8681b9c342849b8cc06b805ac, type: 2}
-    quantity: 4
+  backpack: []
+  shelf: []

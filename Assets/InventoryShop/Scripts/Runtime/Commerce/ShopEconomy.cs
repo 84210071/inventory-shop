@@ -4,7 +4,7 @@ namespace InventoryShop
 {
     public enum PurchaseResult { Success, InsufficientGold, BackpackFull, Invalid }
 
-    public sealed class ShopEconomy
+    public sealed partial class ShopEconomy
     {
         private bool transacting;
 
@@ -18,11 +18,11 @@ namespace InventoryShop
         public ShopEconomy(InventoryStock stock) => Stock = stock ?? throw new ArgumentNullException(nameof(stock));
 
         public DailyOrders InitializeCustomers(CustomerRoster roster, WholesaleCatalog catalog)
-            => CustomerDay ??= roster.Create(catalog);
+            => CustomerDay ??= roster.Create(catalog, Day);
 
         public SaleResult Sell(CustomerOrder order)
         {
-            if (transacting || CustomerDay == null || !CustomerDay.IsCurrent(order) ||
+            if (Phase != BusinessPhase.Trading || transacting || CustomerDay == null || !CustomerDay.IsCurrent(order) ||
                 order.Total < 0 || order.Total > int.MaxValue - (long)Gold)
                 return SaleResult.Invalid;
 
@@ -45,14 +45,14 @@ namespace InventoryShop
 
         public bool Reject(CustomerOrder order)
         {
-            if (transacting || CustomerDay == null || !CustomerDay.IsCurrent(order)) return false;
+            if (Phase != BusinessPhase.Trading || transacting || CustomerDay == null || !CustomerDay.IsCurrent(order)) return false;
             CustomerDay.ResolveCurrent(OrderState.Rejected);
             return true;
         }
 
         public PurchaseResult Purchase(ItemDefinition item, int quantity)
         {
-            if (transacting || item == null || quantity < 1 || item.PurchasePrice < 0 || item.StackLimit < 1)
+            if (Phase != BusinessPhase.Trading || transacting || item == null || quantity < 1 || item.PurchasePrice < 0 || item.StackLimit < 1)
                 return PurchaseResult.Invalid;
 
             long cost = (long)item.PurchasePrice * quantity;

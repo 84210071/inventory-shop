@@ -81,6 +81,13 @@ namespace InventoryShop
             feedbackRect.anchoredPosition = feedbackHome + Vector2.up * travel;
         }
 
+        public void RefreshDay()
+        {
+            day = economy.CustomerDay;
+            expanded = true;
+            ShowCurrent();
+        }
+
         private void ShowCurrent()
         {
             shown = day.Current;
@@ -114,6 +121,7 @@ namespace InventoryShop
         {
             if (!confirming || !CanResolve || !economy.Reject(shown)) return;
             confirming = false;
+            GameAudio.Play("Close");
             ShowFeedback("顾客已离开", false, false);
             StartCoroutine(Depart(false));
         }
@@ -125,10 +133,12 @@ namespace InventoryShop
             switch (economy.Sell(shown))
             {
                 case SaleResult.Success:
+                    GameAudio.Play("Sale");
                     ShowFeedback("交易成功  +" + total + " 金币", true, true);
                     StartCoroutine(Depart(true));
                     break;
                 case SaleResult.OutOfStock:
+                    GameAudio.Play("Error");
                     ShowFeedback("货架库存不足", false, false);
                     break;
                 default:
@@ -150,13 +160,12 @@ namespace InventoryShop
         private void EndTrading()
         {
             if (!Screen.CanUseInventory || resolving || day.Ended) return;
-            if (!day.EndTrading())
+            if (!day.Complete)
             {
                 ShowFeedback("还有未处理订单", false, false);
                 return;
             }
-            RefreshProgress();
-            ShowFeedback("今日营业已结束", true, false);
+            Screen.Business.FinishDay();
         }
 
         private void ShowFeedback(string message, bool positive, bool floatUp)

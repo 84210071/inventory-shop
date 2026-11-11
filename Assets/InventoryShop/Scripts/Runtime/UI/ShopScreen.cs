@@ -26,6 +26,7 @@ namespace InventoryShop
         public Product[] Products;
         public ShopInventory Inventory;
         public CustomerOrdersView Customers;
+        public BusinessView Business;
 
         public bool CanUseInventory => !transitioning && modal == null && !wholesaleOpen;
 
@@ -46,6 +47,7 @@ namespace InventoryShop
         }
 
         public void EnterShop() => Navigate("Shop");
+        public void RestartShop() => Navigate("Shop");
         public void ReturnToMenu() => Navigate("MainMenu");
         public void OpenSettings() => OpenModal(Settings, SettingsClose);
 
@@ -77,12 +79,15 @@ namespace InventoryShop
 
         public void EndWholesale() => wholesaleOpen = false;
 
-        private void OpenModal(FadePanel panel, Button close)
+        public bool IsModalOpen(FadePanel panel) => modal == panel;
+
+        public void OpenModal(FadePanel panel, Button close)
         {
             if (!CanUseInventory) return;
             previousFocus = EventSystem.current.currentSelectedGameObject;
             modal = panel;
             panel.Show();
+            GameAudio.Play("Open");
             close.Select();
         }
 
@@ -90,6 +95,7 @@ namespace InventoryShop
         {
             if (modal == null) return;
             modal.Hide();
+            GameAudio.Play("Close");
             modal = null;
             EventSystem.current.SetSelectedGameObject(previousFocus);
         }

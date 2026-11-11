@@ -12,19 +12,16 @@ namespace InventoryShop
         public Button BackpackButton, CloseButton;
         public StockSlotView[] ShelfSlots, BackpackSlots;
 
-        private static ShopEconomy sessionEconomy;
         private StockSlotView selected, hovered, dragSource;
         private int dragPointer;
 
         public ShopEconomy Economy { get; private set; }
         public InventoryStock Stock => Economy?.Stock;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetSession() => sessionEconomy = null;
 
         private void Awake()
         {
-            Economy = sessionEconomy ??= new ShopEconomy(InitialStock.Create());
+            Economy = GameSession.GetOrStart(InitialStock);
             Bind(ShelfSlots, StockArea.Shelf);
             Bind(BackpackSlots, StockArea.Backpack);
             BackpackButton.onClick.AddListener(ToggleBackpack);
@@ -50,6 +47,7 @@ namespace InventoryShop
             {
                 Screen.CloseDetails();
                 Overlay.SetOpen(true);
+                GameAudio.Play("Open");
                 CloseButton.Select();
             }
         }
@@ -67,6 +65,7 @@ namespace InventoryShop
             if (!Overlay.IsOpen) return;
             CancelDrag();
             Overlay.SetOpen(false);
+            GameAudio.Play("Close");
             if (selected != null && selected.Address.Area == StockArea.Backpack) selected = null;
             hovered = null;
             Refresh();
@@ -115,6 +114,7 @@ namespace InventoryShop
             selected = slot;
             Refresh();
             Overlay.HideTooltip();
+            GameAudio.Play("Drag");
             Overlay.ShowDrag(stack.Item.Icon, e.position);
         }
 
@@ -132,6 +132,7 @@ namespace InventoryShop
             if (target == null || !CanUse(slot) || !CanUse(target) || target == slot)
             {
                 slot.Pulse(true);
+                GameAudio.Play("Error");
                 Overlay.Reject("请放到有效货位");
                 return;
             }
@@ -140,6 +141,7 @@ namespace InventoryShop
             if (result == StockMove.Rejected)
             {
                 slot.Pulse(true);
+                GameAudio.Play("Error");
                 Overlay.Reject("货位已占用或堆叠已满");
                 return;
             }
@@ -147,6 +149,7 @@ namespace InventoryShop
             selected = target;
             Refresh();
             target.Pulse(false);
+            GameAudio.Play("Place");
             if (result == StockMove.Partial) slot.Pulse(false);
             if (!Overlay.IsOpen) Screen.ShowInventoryProduct(Stock.Get(target.Address).Item);
         }

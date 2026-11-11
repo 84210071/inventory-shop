@@ -12,7 +12,15 @@ namespace InventoryShop
         public Outline SelectionOutline;
         public bool Marked { get; set; }
 
+        private Button button;
+        private Color surfaceColor;
         private bool hovered, focused, held;
+
+        private void Awake()
+        {
+            button = GetComponent<Button>();
+            surfaceColor = Surface.color;
+        }
         private float submitUntil, pulseUntil;
         private float baseScale = 1f;
 
@@ -20,8 +28,10 @@ namespace InventoryShop
 
         private void Update()
         {
-            bool pressed = held || Time.unscaledTime < submitUntil;
-            bool highlighted = hovered || focused || Marked;
+            bool enabledForInput = button.IsInteractable();
+            bool pressed = enabledForInput && (held || Time.unscaledTime < submitUntil);
+            bool highlighted = enabledForInput && (hovered || focused || Marked);
+            Surface.color = enabledForInput ? surfaceColor : surfaceColor * new Color(0.57f, 0.53f, 0.50f, 1f);
             Surface.sprite = pressed ? Pressed : highlighted ? Hover : Normal;
             if (SelectionOutline != null) SelectionOutline.enabled = Marked;
             float target = pressed ? 0.96f : highlighted ? 1.045f : 1f;
@@ -41,10 +51,15 @@ namespace InventoryShop
 
         public void OnPointerEnter(PointerEventData e) => hovered = true;
         public void OnPointerExit(PointerEventData e) => hovered = false;
-        public void OnPointerDown(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left) held = true; }
+        public void OnPointerDown(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left) { held = true; if (button.IsInteractable()) GameAudio.Play("Click"); } }
         public void OnPointerUp(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left) held = false; }
         public void OnSelect(BaseEventData e) => focused = true;
         public void OnDeselect(BaseEventData e) => focused = false;
-        public void OnSubmit(BaseEventData e) => submitUntil = Time.unscaledTime + 0.12f;
+        public void OnSubmit(BaseEventData e)
+        {
+            if (!button.IsInteractable()) return;
+            submitUntil = Time.unscaledTime + 0.12f;
+            GameAudio.Play("Click");
+        }
     }
 }

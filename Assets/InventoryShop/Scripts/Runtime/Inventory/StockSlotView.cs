@@ -26,6 +26,9 @@ namespace InventoryShop
             Address = address;
             visual = Icon.rectTransform;
             origin = visual.anchoredPosition;
+            Quantity.fontStyle |= FontStyles.Bold;
+            Quantity.fontSize = address.Area == StockArea.Backpack ? 22 : 28;
+            if (address.Area == StockArea.Backpack) Quantity.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 35);
             GetComponent<Button>().onClick.AddListener(Select);
         }
 

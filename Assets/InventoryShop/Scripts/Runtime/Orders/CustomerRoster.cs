@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace InventoryShop
@@ -17,7 +18,9 @@ namespace InventoryShop
         [SerializeField] private bool useFixedSeed;
         [SerializeField] private int seed = 2026;
 
-        public DailyOrders Create(WholesaleCatalog catalog) => new DailyOrders(customers, catalog.Items,
-            useFixedSeed ? seed : UnityEngine.Random.Range(0, int.MaxValue));
+        public Customer Find(string name) => customers.Single(customer => customer.Name == name);
+
+        public DailyOrders Create(WholesaleCatalog catalog, int day) => new DailyOrders(customers, catalog.Items,
+            useFixedSeed ? unchecked(seed + day - 1) : UnityEngine.Random.Range(0, int.MaxValue));
     }
 }
